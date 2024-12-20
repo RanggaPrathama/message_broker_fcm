@@ -4,11 +4,11 @@ import (
 	"github.com/RanggaPrathama/message_broker_fcm/domain/models"
 	Urepository "github.com/RanggaPrathama/message_broker_fcm/domain/repository/interfaces"
 	Uservice "github.com/RanggaPrathama/message_broker_fcm/service/interfaces"
-) 
+	"github.com/RanggaPrathama/message_broker_fcm/utils"
+)
 
 type UserService struct {
 	UserRepository Urepository.User
-
 }
 
 func NewUserService(userRepository Urepository.User) Uservice.UserServiceInterface {
@@ -29,7 +29,7 @@ func (u *UserService) FindAllUser() ([]models.User, error) {
 }
 
 func (u *UserService) FindUserById(id uint) (models.User, error) {
-	
+
 	users, err := u.UserRepository.FindUserById(id)
 	if err != nil {
 		return users, err
@@ -39,8 +39,16 @@ func (u *UserService) FindUserById(id uint) (models.User, error) {
 }
 
 func (u *UserService) CreateUser(user models.User) error {
-	
-	err := u.UserRepository.CreateUser(user)
+
+	hashedPassword, err := utils.HashPassword(user.PASSWORD)
+
+	if err != nil && hashedPassword == "" {
+		return err
+	}
+
+	user.PASSWORD = hashedPassword
+
+	err = u.UserRepository.CreateUser(user)
 
 	if err != nil {
 		return err
@@ -48,6 +56,3 @@ func (u *UserService) CreateUser(user models.User) error {
 
 	return nil
 }
-
-
-

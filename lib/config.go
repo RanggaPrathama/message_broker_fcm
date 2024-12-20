@@ -1,4 +1,4 @@
-package configs
+package lib
 
 import (
 	"os"
