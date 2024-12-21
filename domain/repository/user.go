@@ -46,6 +46,18 @@ func(repo *UserRepository) FindUserById( id uint) (models.User, error){
 
 }
 
+func(repo *UserRepository) FindUserByEmail(email string) (models.User, error){
+	var user models.User 
+
+	if err := repo.db.Where("email = ?", email).First(&user).Error; err != nil {
+		return user, err
+	}
+
+
+	return user, nil
+}
+
+
 func(repo *UserRepository) CreateUser(user models.User)  error {
 
 	userForm := models.User{

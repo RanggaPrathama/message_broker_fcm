@@ -7,5 +7,6 @@ import (
 type User interface {
 	FindAllUser() ([]models.User, error)
 	FindUserById(id uint) (models.User, error)
+	FindUserByEmail(email string) (models.User, error)
 	CreateUser(user models.User) error
 }

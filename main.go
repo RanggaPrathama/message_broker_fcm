@@ -26,10 +26,13 @@ func main() {
 
 	userRepo := repository.NewUserRepository(lib.Database)
 	userService := service.NewUserService(userRepo)
-	handler := handler.NewUserHandler(userService)
+	userhandler := handler.NewUserHandler(userService)
 
-	routes.UserRoute(app, handler)
-
-
+	authService := service.NewAuthService(userRepo)
+	authHandler := handler.NewAuthHandler(authService)
+	
+	routes.UserRoute(app, userhandler)
+	routes.AuthRoute(app, authHandler)
+	
 	app.Listen(fmt.Sprintf(":%s", lib.LoadEnv("APP_PORT")))
 }

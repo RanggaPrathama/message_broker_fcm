@@ -10,3 +10,13 @@ type User struct {
 	CREATED_AT *time.Time `gorm:"type:timestamp with time zone" json:"created_at"`
 	UPDATED_AT *time.Time `gorm:"type:timestamp with time zone" json:"updated_at"`
 }
+
+type UserLoginResponse struct{
+	ID_USER    uint      ` json:"id_user"`
+	USERNAME   string    ` json:"username"` 
+	EMAIL      string    ` json:"email"` 
+	PASSWORD   string    ` json:"password"`
+	CREATED_AT *time.Time ` json:"created_at"`
+	UPDATED_AT *time.Time ` json:"updated_at"`
+	TOKEN    string    `json:"token"`
+}
