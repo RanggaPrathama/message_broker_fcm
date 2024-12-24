@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"fmt"
+
 	"github.com/RanggaPrathama/message_broker_fcm/domain/models"
 	"github.com/RanggaPrathama/message_broker_fcm/response"
 	"github.com/RanggaPrathama/message_broker_fcm/service/interfaces"
@@ -19,7 +21,7 @@ func NewAuthHandler(authService interfaces.AuthServiceInterface) *AuthHandler{
 
 func (auth *AuthHandler) Login(c *fiber.Ctx) error {
 	
-	var user models.UserLoginResponse
+	var user models.UserLoginRequest
 
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(response.GlobalResponse{
@@ -29,7 +31,17 @@ func (auth *AuthHandler) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	user , err := auth.authService.Login(user)
+	fmt.Println("USER PARSE", user)
+
+	usersResponse , err := auth.authService.Login(user)
+
+	// if err != nil && err.Error() == "sorry, you have logged in on another device"{
+	// 	return c.Status(fiber.StatusBadRequest).JSON(response.GlobalResponse{
+	// 		Status:  fiber.StatusBadRequest,
+	// 		Message: "Failed to login",
+	// 		Data:    err.Error(),
+	// 	})
+	// }
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(response.GlobalResponse{
@@ -42,6 +54,6 @@ func (auth *AuthHandler) Login(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(response.GlobalResponse{
 		Status:  fiber.StatusOK,
 		Message: "Success",
-		Data: user,
+		Data: usersResponse,
 	})
 }

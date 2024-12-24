@@ -76,3 +76,14 @@ func(repo *UserRepository) CreateUser(user models.User)  error {
 
 	return nil
 }
+
+func(repo *UserRepository) UpdateLastLogin(id uint) error {
+
+	err := repo.db.Model(models.User{}).Where("id_user = ?", id).Update("last_login", time.Now())
+
+	if err.Error != nil {
+		return err.Error
+	}
+
+	return nil
+}

@@ -9,4 +9,5 @@ type User interface {
 	FindUserById(id uint) (models.User, error)
 	FindUserByEmail(email string) (models.User, error)
 	CreateUser(user models.User) error
+	UpdateLastLogin(id uint) error
 }
