@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"fmt"
+
 	"github.com/RanggaPrathama/message_broker_fcm/domain/models"
 	"github.com/RanggaPrathama/message_broker_fcm/response"
 	Dservice "github.com/RanggaPrathama/message_broker_fcm/service/interfaces"
@@ -87,5 +89,39 @@ func(handler *DeviceHandler) UpdateDeviceToken(c *fiber.Ctx) error {
 		Status:  fiber.StatusOK,
 		Message: "Success",
 		Data:   "Device updated",})
+
+	}
+
+	func (handler *DeviceHandler) CekDeviceActive(c *fiber.Ctx) error {
+
+		var device models.DeviceUserRequest
+
+		userId := c.Locals("id_user").(uint)
+		fmt.Println("USER ID HANDLER", userId)
+
+		if err := c.BodyParser(&device); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(response.GlobalResponse{
+				Status:  fiber.StatusInternalServerError,
+				Message: "Failed to parse request",
+				Data:    nil,
+			})
+		}
+
+		deviceResponse, err := handler.DeviceService.CekDevice(userId,device)
+
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(response.GlobalResponse{
+				Status:  fiber.StatusInternalServerError,
+				Message: fmt.Sprintf("Failed to get device %v", err),
+				Data:    err,
+			})
+		}
+
+
+		return c.Status(fiber.StatusOK).JSON(response.GlobalResponse{
+			Status:  fiber.StatusOK,
+			Message: "Success",
+			Data:    deviceResponse,
+		})
 
 	}

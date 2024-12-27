@@ -16,8 +16,9 @@ type DeviceUser struct {
 }
 
 type DeviceUserRequest struct{
-	DEVICE_IDPHONE string `json:"device_idphone"`
+	DEVICE_ID_PHONE string `json:"device_id_phone"`
 	DEVICE_IP_ADDRESS string `json:"device_ip_address"`
+	//USER_ID_USER uint `json:"user_id_user"`
 	PLATFORM string `json:"platform"`
 	DEVICE_TOKEN string `json:"device_token"`
 }

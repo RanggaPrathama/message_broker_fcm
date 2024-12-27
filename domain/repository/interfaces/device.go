@@ -7,7 +7,7 @@ type DeviceRepositoryInterface interface {
 	CreateDevice(device models.DeviceUser) error
 	GetDeviceByToken(token string) (models.DeviceUser, error)
 	GetDeviceUserByActive(userId uint) (models.DeviceUser, error)
-	GetDeviceByIdPhone(userId uint, id string) (*models.DeviceUser, error)
+	GetDeviceByIdPhone(userId uint, id string) (models.DeviceUser, error)
 	UpdateDevice(device models.DeviceUser) error
 	UpdateDeviceTokenFcm(id string, token string) error
 	Deactivedevice(userId uint, deviceId string) error

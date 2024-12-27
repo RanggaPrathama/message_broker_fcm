@@ -58,22 +58,25 @@ func (repo *DeviceRepository) GetDeviceByToken(token string) (models.DeviceUser,
 	return device, nil
 }
 
-func (repo *DeviceRepository) GetDeviceByIdPhone(user_id uint,id string) (*models.DeviceUser, error) {
+func (repo *DeviceRepository) GetDeviceByIdPhone(user_id uint,id string) (models.DeviceUser, error) {
 
 	var device models.DeviceUser
 
-	result := repo.db.Where("device_id_phone = ? AND user_id_user = ? ", id, user_id, true).First(&device)
+	result := repo.db.Where("device_id_phone = ? AND user_id_user = ? AND is_active = ?", id, user_id, true).First(&device)
 
 	fmt.Println("DEVICE REPO ", device)
+	fmt.Print("RESULT ", result)
 
 	if result.Error != nil {
-		return &device, result.Error
+		return device, result.Error
 	}
 
-	return &device, nil
+	return device, nil
 }
 
 func(repo *DeviceRepository) GetDeviceUserByActive(userId uint) (models.DeviceUser, error) {
+	
+	fmt.Println("GET DEVICE USER ACTIVE REPO")
 	var device models.DeviceUser
 
 	result := repo.db.Where("is_active = ? AND user_id_user = ?", true, userId).First(&device)
@@ -88,6 +91,7 @@ func(repo *DeviceRepository) GetDeviceUserByActive(userId uint) (models.DeviceUs
 
 func (repo *DeviceRepository) UpdateDevice(device models.DeviceUser) error {
 
+	fmt.Println("UPDATE DEVICE REPO")
 	var deviceUpdate models.DeviceUser
 
 	result := repo.db.Model(&deviceUpdate).Where("id_device = ?", device.ID_DEVICE).Updates(models.DeviceUser{
@@ -119,7 +123,8 @@ func(repo *DeviceRepository) UpdateDeviceTokenFcm(id string, token string) error
 
 func (repo *DeviceRepository) Deactivedevice(userId uint, deviceId string) error {
 
-	result := repo.db.Model(&models.DeviceUser{}).Where("user_id_user = ? AND id_device != ?", userId, deviceId).Update("is_active", false)
+	fmt.Println("DEACTIVED DEVICE REPO")
+	result := repo.db.Model(&models.DeviceUser{}).Where("user_id_user = ? AND device_id_phone != ?", userId, deviceId).Update("is_active", false)
 
 	if result.Error != nil {
 		return result.Error

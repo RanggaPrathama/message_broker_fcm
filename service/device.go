@@ -1,14 +1,16 @@
 package service
 
 import (
-	"errors"
+
+	//"errors"
 	"fmt"
 	"time"
 
 	"github.com/RanggaPrathama/message_broker_fcm/domain/models"
 	DRepository "github.com/RanggaPrathama/message_broker_fcm/domain/repository/interfaces"
 	DService "github.com/RanggaPrathama/message_broker_fcm/service/interfaces"
-	"gorm.io/gorm"
+	//"gorm.io/gorm"
+	
 )
 
 type DeviceService struct {
@@ -98,32 +100,37 @@ func (service *DeviceService) CekDevice(userId uint, deviceRequest models.Device
 
 	device, err := service.deviceRepo.GetDeviceUserByActive(userId)
 	
-	if err != nil {
-		return device, err
+	// if err != nil {
+	// 	return device, err
+	// }
+
+	print("Device ACTIVE", device.IS_ACTIVE)
+
+	if deviceRequest.DEVICE_ID_PHONE == "" {
+		return device, fmt.Errorf("device id phone is required")
 	}
 
-	if device.DEVICE_ID_PHONE == "" {
-		return device, fmt.Errorf("sorry, you have not logged in on any device")
-	}
-
-	if  device.IS_ACTIVE &&  deviceRequest.DEVICE_IDPHONE != device.DEVICE_ID_PHONE {
+	if  err == nil && device.IS_ACTIVE &&  deviceRequest.DEVICE_ID_PHONE != device.DEVICE_ID_PHONE {
 		return device, fmt.Errorf("sorry, you have logged in on another device")
 	}
 
 	//cek  device apakah tersimpan di database
-	existingDevice, err := service.deviceRepo.GetDeviceByIdPhone(userId, deviceRequest.DEVICE_IDPHONE)
+	existingDevice, err := service.deviceRepo.GetDeviceByIdPhone(userId, deviceRequest.DEVICE_ID_PHONE)
 
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-        return device, err
-    }
+	// if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+    //     return device, err
+    // }
 
-	if existingDevice != nil {
+	fmt.Println("EXISTING DEVICE", existingDevice)
+	if  err == nil && existingDevice.DEVICE_ID_PHONE != ""  {
 		if err := service.deviceRepo.UpdateDevice(
 			models.DeviceUser{
+				DEVICE_ID_PHONE: deviceRequest.DEVICE_ID_PHONE,
 				PLATFORM: deviceRequest.PLATFORM,
 				DEVICE_IP_ADDRESS: deviceRequest.DEVICE_IP_ADDRESS,
 				DEVICE_TOKEN: deviceRequest.DEVICE_TOKEN,
 				IS_ACTIVE: true,
+				UPDATED_AT: func() *time.Time { t := time.Now(); return &t}(),
 			},
 		); err != nil {
 			return device, err
@@ -132,7 +139,7 @@ func (service *DeviceService) CekDevice(userId uint, deviceRequest models.Device
 		device := models.DeviceUser{
 			USER_ID_USER: userId,
 			DEVICE_IP_ADDRESS: deviceRequest.DEVICE_IP_ADDRESS,
-			DEVICE_ID_PHONE: deviceRequest.DEVICE_IDPHONE,
+			DEVICE_ID_PHONE: deviceRequest.DEVICE_ID_PHONE,
 			PLATFORM: deviceRequest.PLATFORM,
 			DEVICE_TOKEN: deviceRequest.DEVICE_TOKEN,
 			CREATED_AT: func() *time.Time { t := time.Now(); return &t }(),
@@ -147,7 +154,7 @@ func (service *DeviceService) CekDevice(userId uint, deviceRequest models.Device
 	}
 
 	// deactive device all agnore current device
-	if err := service.deviceRepo.Deactivedevice(userId, deviceRequest.DEVICE_IDPHONE); err != nil {
+	if err := service.deviceRepo.Deactivedevice(userId, deviceRequest.DEVICE_ID_PHONE); err != nil {
 		return device, err
 	}
 
