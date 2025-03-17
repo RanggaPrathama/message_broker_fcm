@@ -7,9 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// type Database struct {
-// 	db *gorm.DB
-// }
+
 
 var Database *gorm.DB
 
@@ -30,10 +28,17 @@ func ConnectionPostgree() *gorm.DB {
 		fmt.Println("Failed to connect to database")
 		panic(err)
 	}
-	
+
+    //ping db connection
+	sqlDB , _ := db.DB()
+
+	sqlDB.Ping()
+
+	sqlDB.SetMaxIdleConns(10)
+
 	fmt.Println("Connection to database established")
 
 	Database = db
 	
-	return Database
+	return db
 }

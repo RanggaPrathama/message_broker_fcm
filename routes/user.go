@@ -9,7 +9,10 @@ import (
 func UserRoute(app *fiber.App, handler *handler.UserHandler) {
 
 	api := app.Group("/api")
+	
+	api.Post("/registrasi", handler.CreateUser)
+	
 	users := api.Group("/users", middleware.VerifyJwtToken)
 	users.Get("/", handler.FindAllUser)
-	users.Post("/create", handler.CreateUser)
+	// users.Post("/create", handler.CreateUser)
 }

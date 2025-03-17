@@ -3,6 +3,7 @@ package service
 import (
 	//"errors"
 	"fmt"
+
 	//"time"
 
 	"github.com/RanggaPrathama/message_broker_fcm/domain/models"
@@ -107,4 +108,12 @@ func (auth *AuthService) Login(userRequest models.UserLoginRequest) (models.User
 
 	return userResponse, nil
 
+}
+
+
+func (auth *AuthService) HandlerLoginCallback(userRequest models.GoogleLoginRequest) (models.UserLoginResponse, error){
+
+	
+    
+  return models.UserLoginResponse{}, nil
 }
